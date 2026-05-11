@@ -13,7 +13,7 @@ this document is intended for AI coding assistants working in the `iron-and-alms
 ## Project Context
 
 - **Description**: a medieval tactical RPG inspired by Darklands, Jagged Alliance, and Battle Brothers. players lead a small company of fighters navigating a dark, historically grounded medieval world — managing their crew, resources, and moral choices across turn-based combat and strategic decisions.
-- **Language**: TBD
+- **Language**: Go 1.22+ (Ebitengine for 2D rendering)
 - **Architecture**: see `SPEC.md` for full architectural details.
 
 ## Coding Conventions

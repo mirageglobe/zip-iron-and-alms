@@ -37,21 +37,125 @@
 
 ## 3. Technology Stack
 
-| component    | choice  | notes                       |
-| :----------- | :------ | :-------------------------- |
-| language     | TBD     |                             |
-| rendering    | TBD     |                             |
-| data / save  | TBD     |                             |
-| build tool   | Make    | standard across all repos   |
+| component     | choice                      | notes                                  |
+| :-----------  | :-------------------------- | :------------------------------------- |
+| language      | Go 1.22+                  | static binary, `CGO_ENABLED=0`, cross-platform |
+| rendering     | [Ebitengine](https://ebiten.org/)| Go-native 2D engine, no CGO         |
+| data / save   | JSON + SQLite             | JSON for config/asset tables, SQLite for saves |
+| build tool    | Make                       | standard across all repos              |
+| asset mgr     | procedural PNG + sprite sheets | embedded via `go:embed` at build time |
+| music/sfx     | OGG via `stb_audio`        | fallback: silent on unsupported builds |
+
+#### Why Go?
+
+- **Static single-binary builds** — `CGO_ENABLED=0` produces a self-contained executable for all platforms. no runtime dependencies, no installers.
+- **Turn-based system logic first** — tactical combat, company management, procedural world generation are all data/logic heavy problems where Go excels.
+- **Full test suite** — `go test` covers core game logic independently of rendering. no GPU required for testing.
+- **Cross-compilation** — `GOOS=linux GOARCH=amd64` produces binaries for every major platform from a single host.
+- **Ebitengine maturity** — stable, actively maintained, targets Windows/macOS/Linux/Android/Web. sprite-based rendering is sufficient for a turn-based RPG.
+
+#### Architecture Rationale
+
+```
+┌───────────────────────────────────────┐
+│  Ebitengine UI (ui/)                  │  ← rendering only
+│  ─────────────────────────────────   │
+│  Game Engine (engine/)                │  ← game loop, input processing
+│  ─────────────────────────────────   │
+│  Core Systems (core/, world/, etc.)   │  ← pure logic, no deps on UI
+│  ─────────────────────────────────   │
+│  Data Layer (data/)                   │  │  persistence, asset loading
+└───────────────────────────────────────┘
+```
+
+core and data packages are UI-independent. they can be tested with `go test` in isolation. the engine and ui packages wrap around core systems.
 
 ---
 
 ## 4. Architecture
 
-> TBD — to be defined once the tech stack is confirmed.
+the project follows a layered architecture with clear separation between rendering and game logic. core systems have no dependencies on UI packages — they operate on pure data.
 
-high-level layers to design for:
+```
+┌─────────────────────────────────────────────────────────┐
+│  ebitengine (ui/)                                         │
+│    ┌────────────┐  ┌────────────┐  ┌────────────┐       │
+│    │  main menu  │  │   HUD      │  │   combat   │       │
+│    │  rendering │  │  rendering │  │   render   │       │
+│    └────────────┘  └────────────┘  └────────────┘       │
+│    └─────── calls into engine.Game ──────────┘            │
+├─────────────────────────────────────────────────────────┤
+│  engine/                                                  │
+│    ┌────────────┐  ┌────────────┐  ┌────────────┐       │
+│    │  GameLoop  │  │  WorldMgr  │  │  Combat    │       │
+│    │            │  │            │  │   state    │       │
+│    └────────────┘  └────────────┘  └────────────┘       │
+│    └─────── calls into core/ and world/ ──────────┘       │
+├─────────────────────────────────────────────────────────┤
+│  core/  (roster, combat rules, inventory, economy)        │
+│  world/ (procedural map, factions, events, religion)      │
+│  data/  (save/load, asset tables, config)                  │
+│  all pure logic, no UI or engine deps                      │
+└─────────────────────────────────────────────────────────┘
+```
 
+### Package Responsibilities
+
+| Package  | Owns                                          | Does NOT Own         |
+| :------- | :---------------------------------------------| :--------------------|
+| `core/`  | Company roster, unit stats, combat rules, inventory, economy   | rendering, save data |
+| `world/` | Procedural world map, factions, events, terrain, religion        | game loop, combat logic |
+| `data/`  | Save/load, schema, configuration tables, embedded assets        | game logic, rendering |
+| `engine/`| Game loop, state machine, input dispatching | core rules, persistence |
+| `ui/`    | Ebitengine rendering, menus, HUD, dialogs   | game rules, engine   |
+
+### Cross-Package Communication
+
+```
+ui ──▶ engine ──▶ core ──▶ world ──▶ data
+ui ◀── engine ◀── core ◀── world ◀── data
+```
+
+packages only import packages directly below them. no cross-wiring upward. interfaces defined in the consumer package define the boundary.
+
+### Core Data Model (Outline)
+
+```
+Company
+├── Roster []Fighter
+│   ├── Fighter: ID, Name, Class, Level, HP, STR/DEX/CON/INT/WIS/CHA
+│   ├── Wounds: []Wound{location, severity, days}
+│   └── Morale: trait, loyalty, piety
+├── Funds: gold
+├── Strength: int  (combat-ready count)
+└── Reputation: []FactionRep{name, standing}
+
+Combat
+└── Battle: TurnBased
+    ├── Map []Tile
+    ├── Units []BattleUnit
+    ├── OrderQueue []Order
+    └── Result: enum{player_victory, retreat, defeat}
+```
+
+---
+
+## 5. File Structure
+
+```
+iron-and-alms/
+├── main.go                 # entry point: ebitgame.Run(game)
+├── Makefile
+├── go.mod
+├── AGENT.md
+├── CLAUDE.md -> AGENT.md
+├── README.md
+└── SPEC.md
+core/                       # game logic: company, combat, economy
+world/                      # procedural generation, factions
+data/                       # save/load, config, assets
+engine/                     # game loop, state machine
+ui/                         # rendering, menus, HUD
 ```
 ┌───────────────────────────────────────┐
 │               UI / Renderer           │
@@ -81,9 +185,9 @@ iron-and-alms/
 
 ## 6. Complexity Score
 
-| dimension   | score | notes                                    |
+| dimension    | score | notes                                     |
 | :---------- | :---- | :--------------------------------------- |
-| overall     | TBD   | to assess once stack and scope are fixed |
+| overall      | 3 / 5 | moderate; multi-package with protocol work|
 
 ---
 
