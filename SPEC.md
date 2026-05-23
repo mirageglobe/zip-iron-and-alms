@@ -14,11 +14,11 @@
 
 ### Inspirations
 
-| game              | what we draw from                                                  |
-| :---------------- | :----------------------------------------------------------------- |
-| Darklands          | dark historical realism, faith mechanics, alchemy, moral ambiguity |
-| Jagged Alliance    | mercenary management, inventory depth, character personality       |
-| Battle Brothers    | company-scale tactics, permadeath, procedural world events         |
+| game            | what we draw from                                                  |
+| :-------------- | :----------------------------------------------------------------- |
+| Darklands       | dark historical realism, faith mechanics, alchemy, moral ambiguity |
+| Jagged Alliance | mercenary management, inventory depth, character personality       |
+| Battle Brothers | company-scale tactics, permadeath, procedural world events         |
 
 ---
 
@@ -37,14 +37,14 @@
 
 ## 3. Technology Stack
 
-| component     | choice                      | notes                                  |
-| :-----------  | :-------------------------- | :------------------------------------- |
-| language      | Go 1.22+                  | static binary, `CGO_ENABLED=0`, cross-platform |
-| rendering     | [Ebitengine](https://ebiten.org/)| Go-native 2D engine, no CGO         |
-| data / save   | JSON + SQLite             | JSON for config/asset tables, SQLite for saves |
-| build tool    | Make                       | standard across all repos              |
-| asset mgr     | procedural PNG + sprite sheets | embedded via `go:embed` at build time |
-| music/sfx     | OGG via `stb_audio`        | fallback: silent on unsupported builds |
+| component   | choice                            | notes                                              |
+| :---------- | :-------------------------------- | :------------------------------------------------- |
+| language    | Go 1.22+                          | static binary, `CGO_ENABLED=0`, cross-platform     |
+| rendering   | [Ebitengine](https://ebiten.org/) | Go-native 2D engine, no CGO                        |
+| data / save | JSON + SQLite                     | JSON for config/asset tables, SQLite for saves     |
+| build tool  | Make                              | standard across all repos                          |
+| asset mgr   | procedural PNG + sprite sheets    | embedded via `go:embed` at build time              |
+| music/sfx   | OGG via `stb_audio`               | fallback: silent on unsupported builds             |
 
 #### Why Go?
 
@@ -101,13 +101,13 @@ the project follows a layered architecture with clear separation between renderi
 
 ### Package Responsibilities
 
-| Package  | Owns                                          | Does NOT Own         |
-| :------- | :---------------------------------------------| :--------------------|
-| `core/`  | Company roster, unit stats, combat rules, inventory, economy   | rendering, save data |
-| `world/` | Procedural world map, factions, events, terrain, religion        | game loop, combat logic |
-| `data/`  | Save/load, schema, configuration tables, embedded assets        | game logic, rendering |
-| `engine/`| Game loop, state machine, input dispatching | core rules, persistence |
-| `ui/`    | Ebitengine rendering, menus, HUD, dialogs   | game rules, engine   |
+| Package   | Owns                                                         | Does NOT Own            |
+| :-------- | :----------------------------------------------------------- | :---------------------- |
+| `core/`   | Company roster, unit stats, combat rules, inventory, economy | rendering, save data    |
+| `world/`  | Procedural world map, factions, events, terrain, religion    | game loop, combat logic |
+| `data/`   | Save/load, schema, configuration tables, embedded assets     | game logic, rendering   |
+| `engine/` | Game loop, state machine, input dispatching                  | core rules, persistence |
+| `ui/`     | Ebitengine rendering, menus, HUD, dialogs                    | game rules, engine      |
 
 ### Cross-Package Communication
 
@@ -185,9 +185,9 @@ iron-and-alms/
 
 ## 6. Complexity Score
 
-| dimension    | score | notes                                     |
-| :---------- | :---- | :--------------------------------------- |
-| overall      | 3 / 5 | moderate; multi-package with protocol work|
+| dimension | score | notes                                      |
+| :-------- | :---- | :----------------------------------------- |
+| overall   | 3 / 5 | moderate; multi-package with protocol work |
 
 ---
 
@@ -197,6 +197,7 @@ iron-and-alms/
 
 - [ ] `[project]` confirm technology stack and language  [easy]
 - [ ] `[project]` scaffold project structure (Makefile, build, test targets)  [easy]
+- [ ] `[project]` update Makefile to be standard  [easy]
 - [ ] `[combat]` define tile-based combat rules (movement, attack, line of sight)  [hard]
 - [ ] `[company]` define company data model (roster, stats, wounds, morale, pay)  [medium]
 - [ ] `[world]` design procedural world map and event system  [hard]
