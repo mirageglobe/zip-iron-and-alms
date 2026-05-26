@@ -5,12 +5,15 @@ GOFMT  := gofmt
 GOCMD  := $(GO)
 BINARY := iron-and-alms
 
-.PHONY: all build test fmt lint clean help
+.PHONY: all build dev test fmt lint clean help
 
 all: build test
 
 build:
 	$(GOCMD) build -o $(BINARY) ./...
+
+dev:
+	air
 
 test:
 	$(GOCMD) test -v  -race ./...
@@ -30,5 +33,6 @@ help:
 	@echo "  test   - run all tests"
 	@echo "  fmt    - format all Go source"
 	@echo "  lint   - run go vet"
+	@echo "  dev    - live reload via air (install: go install github.com/air-verse/air@latest)"
 	@echo "  clean  - remove build artifacts"
 	@echo "  help   - show this help"
