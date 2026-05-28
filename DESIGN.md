@@ -176,6 +176,19 @@ roster of named fighters with persistent stats, wounds, and morale. fighters dem
 
 procedural map of regions, towns, and wilderness. factions control territory; contracts from lords, merchants, and churches drive the economy.
 
+**map model — node-based first, free roam later**
+
+- **node-based (v1)** — towns and landmarks connected by roads; travel is a decision: which route, how long, what danger; danger zones are edge weights; contracts reference nodes
+- **free roam (v2)** — nodes become anchor points in a continuous map; wilderness between nodes becomes explorable — ruins, ambush sites, resource camps; roads are safe(ish), wilderness is not
+
+the evolution is additive — free roam fills the space between nodes without replacing them. the silk road geography drives this naturally: the road between Baghdad and Samarkand is a traversable region, not just a travel cost.
+
+**world map properties**
+- continental scale spanning Europe, Levant, Persia, Central Asia, and China's edge
+- faction strength scores control regions; collapsed factions leave power vacuums
+- travel time and road danger shift with faction control — a war front makes safe roads unsafe
+- unexplored regions in the far east are genuinely unknown early in a run; rumours precede discovery
+
 ### Faith
 
 piety is a per-fighter resource, not a flavour bar. it is spent by prayer and rebuilt through action — attending rites, completing pilgrimages, honouring oaths.
@@ -202,6 +215,22 @@ a preparation system rooted in the silk road setting — islamic, byzantine, and
 - crafting takes time — a fighter preparing supplies isn't available for combat
 - consumables reward preparation, not tactical mistakes
 - short recipe list and scarce ingredients prevent it overwhelming the inventory layer
+
+### Time
+
+**turn-based days.** time advances when the player confirms an action — travel, rest, craft, resolve a contract. the world only moves when the player moves.
+
+**the daily tick**
+each action costs a number of days. when days advance, everything ticks forward by that amount:
+- wages deduct per day
+- wounds heal per day
+- faction strength shifts incrementally
+- contract deadlines count down
+
+**player controls the pace**
+- rest often: burns wages, fighters arrive healthy
+- push hard: covers ground faster, fighters arrive fatigued with less gold
+- events fire as interrupts on the daily tick — the clock runs, events happen on the clock
 
 ### Economy
 
