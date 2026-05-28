@@ -105,22 +105,49 @@ ui/                         # rendering, menus, HUD
 
 ## 5. Roadmap
 
-### near term
+see [DESIGN.md](DESIGN.md) for full system design. roadmap follows the 8-layer build order — complete each layer before starting the next.
 
-- [ ] `[project]` confirm technology stack and language  [easy]
+### layer 1 — resource pressure (near term)
+
 - [ ] `[project]` scaffold project structure (Makefile, build, test targets)  [easy]
-- [ ] `[project]` update Makefile to be standard  [easy]
-- [ ] `[combat]` define tile-based combat rules (movement, attack, line of sight)  [hard]
-- [ ] `[company]` define company data model (roster, stats, wounds, morale, pay)  [medium]
-- [ ] `[world]` design procedural world map and event system  [hard]
+- [ ] `[company]` implement company data model (roster, fighters, stats, wounds)  [medium]
+- [ ] `[company]` implement daily wage deduction and gold tracking  [easy]
+- [ ] `[company]` implement wound system — bench fighters, daily healing tick  [medium]
+- [ ] `[equipment]` implement equipment degradation and repair cost  [medium]
+- [ ] `[combat]` implement auto battle resolution (fatigue, morale, formation)  [hard]
+- [ ] `[world]` implement node-based world map with travel cost in days  [medium]
+- [ ] `[contract]` implement basic contract — accept, travel, resolve, pay  [medium]
 
-### ideas
+### layer 2 — reputation
 
-- [ ] `[faith]` faith and divine favour mechanics — prayer, relics, miracles with real cost  [medium]
-- [ ] `[economy]` medieval contract economy — work for lords, merchants, churches  [medium]
-- [ ] `[reputation]` faction reputation system affecting available contracts and town access  [medium]
-- [ ] `[alchemy]` Darklands-style alchemy for consumables and battlefield effects  [hard]
-- [ ] `[narrative]` procedural event text with historically grounded flavour  [hard]
+- [ ] `[reputation]` implement five-tier reputation score  [easy]
+- [ ] `[contract]` gate contract availability by reputation tier  [easy]
+
+### layer 3 — consequence flags
+
+- [ ] `[world]` implement faction/town relationship flags (hostile/neutral/friendly/allied)  [medium]
+- [ ] `[contract]` flip relationship flags based on contract outcomes  [medium]
+
+### layer 4 — faction drift + crisis events
+
+- [ ] `[world]` implement faction strength score with daily drift  [medium]
+- [ ] `[world]` implement faction collapse and expansion at strength thresholds  [medium]
+- [ ] `[world]` implement continental crisis events (mongol expansion, plague, noble war)  [hard]
+
+### layer 5 — generational play
+
+- [ ] `[company]` implement fighter age counter and death by old age  [easy]
+- [ ] `[company]` implement legacy trait assigned on veteran death  [medium]
+
+### ideas (layers 6–8)
+
+- [ ] `[faith]` piety as per-fighter resource; sin events; morale and combat consequences  [medium]
+- [ ] `[alchemy]` regional ingredients; 10–15 recipes; alchemy trait for advanced recipes  [medium]
+- [ ] `[equipment]` named equipment with history flags  [easy]
+- [ ] `[world]` free roam map — wilderness between nodes becomes explorable  [hard]
+- [ ] `[world]` far east regions unlock via exploration  [medium]
+- [ ] `[reputation]` kingmaker tier — company shapes faction outcomes  [hard]
+- [ ] `[narrative]` authored campaign event chains layered on sandbox  [hard]
 
 ---
 
